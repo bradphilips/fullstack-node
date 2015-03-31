@@ -1,0 +1,9 @@
+{
+    "watch": [
+        "app/"
+    ],
+    "logging-enabled": true,
+    "restart": true,
+    "plugins": {
+    }
+}
