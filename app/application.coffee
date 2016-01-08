@@ -4,7 +4,7 @@ Favicon = require("serve-favicon")
 Logger = require("morgan")
 CookieParser = require("cookie-parser")
 BodyParser = require("body-parser")
-Sass = require('node-sass')
+Sass = require('node-sass-middleware')
 Https = require('https')
 Compression = require('compression')
 FileSystem = require('fs')
@@ -38,14 +38,14 @@ class Application
     _app.use new Favicon(__dirname + (_options.favicon ||= '/public/images/favicon.ico'))
     _app.use new Logger(_options.environment ||= "dev")
     _app.use new BodyParser.json()
-    _app.use new BodyParser.urlencoded()
+    _app.use new BodyParser.urlencoded( { extended: true } )
     _app.use new CookieParser()
     _app.use new Compression()
 
     _app.use Express.session({ secret: '47ffe4924a549793cd4915353d454f95ec2d19cfceb199c90c36ef76e77a8b6964d632bd29d24c2829fe6b368b615db21f7f490872ae53cdfd64f0c09eaab844' })
     _app.use Express.csrf()
 
-    _app.use Sass.middleware {
+    _app.use Sass {
       src: __dirname + '/assets',
       dest: __dirname + '/public',
       outputStyle: 'compressed'
