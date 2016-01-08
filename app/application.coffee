@@ -1,4 +1,6 @@
-Express = require("express.io")
+Express = require("express")
+Session = require('express-session');
+Csrf = require('csurf');
 Path = require("path")
 Favicon = require("serve-favicon")
 Logger = require("morgan")
@@ -15,7 +17,6 @@ class Application
 
   constructor:(options) ->
     _app = new Express()
-    _app.http().io()
     _options = options
 
     this.configure()
@@ -42,8 +43,12 @@ class Application
     _app.use new CookieParser()
     _app.use new Compression()
 
-    _app.use Express.session({ secret: '47ffe4924a549793cd4915353d454f95ec2d19cfceb199c90c36ef76e77a8b6964d632bd29d24c2829fe6b368b615db21f7f490872ae53cdfd64f0c09eaab844' })
-    _app.use Express.csrf()
+    _app.use new Session({ 
+      secret: '47ffe4924a549793cd4915353d454f95ec2d19cfceb199c90c36ef76e77a8b6964d632bd29d24c2829fe6b368b615db21f7f490872ae53cdfd64f0c09eaab844',
+      resave: false,
+      saveUninitialized: false
+    })
+    _app.use new Csrf()
 
     _app.use Sass {
       src: __dirname + '/assets',
@@ -51,7 +56,6 @@ class Application
       outputStyle: 'compressed'
     }
     _app.use Express.static(Path.join(__dirname, (_options.public ||= "public")))
-    _app.locals _options
 
   configureErrorHandlers: () ->
     #/ catch 404 and forward to error handler
